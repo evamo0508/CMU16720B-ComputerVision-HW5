@@ -15,11 +15,14 @@ import skimage.segmentation
 
 # from nn import *
 # from q4 import *
+from text_effect import *
 
 class GUI(object):
     ind = 0
     def apply(self, event):
         pass
+    def check_effects(self, label):
+        index = labels.index(label)
 
 
 
@@ -68,6 +71,7 @@ def parse_input(Input):
 
 def update_img(img):
     bboxes, bw = find_bboxes(img)
+    print(bboxes)
 
     plt.imshow(bw, cmap='gray')
     for bbox in bboxes:
@@ -84,11 +88,16 @@ def update_img(img):
     rax = plt.axes([0.05, 0.4, 0.1, 0.15])
     labels = ["Bold", "Italic", "Underline"]
     check = matplotlib.widgets.CheckButtons(rax, labels)
+    # check.on_clicked(func)
     plt.show()
 
 if __name__ == "__main__":
     img = load_img()
     # img = warp(img)
-    # bboxes = find_bboxes(img)
+    bboxes = find_bboxes(img)
+    print(len(bboxes))
     # loop(img)
-    update_img(img)
+    # update_img(img)
+    im1 = italic(img, bboxes)
+    plt.imshow(im1)
+    plt.show()
