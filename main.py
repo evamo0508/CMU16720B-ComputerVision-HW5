@@ -1,4 +1,5 @@
 import numpy as np
+import os
 import matplotlib.pyplot as plt
 import matplotlib.patches
 import matplotlib.widgets
@@ -12,28 +13,18 @@ import skimage.filters
 import skimage.morphology
 import skimage.segmentation
 
-from nn import *
-from q4 import *
+# from nn import *
+# from q4 import *
 
 class GUI(object):
     ind = 0
+    def apply(self, event):
+        pass
 
-    def next(self, event):
-        self.ind += 1
-        i = self.ind % len(freqs)
-        ydata = np.sin(2*np.pi*freqs[i]*t)
-        l.set_ydata(ydata)
-        plt.draw()
 
-    def prev(self, event):
-        self.ind -= 1
-        i = self.ind % len(freqs)
-        ydata = np.sin(2*np.pi*freqs[i]*t)
-        l.set_ydata(ydata)
-        plt.draw()
 
 def load_img():
-    return skimage.img_as_float(skimage.io.imread(os.path.join('../images',img)))
+    return skimage.img_as_float(skimage.io.imread('images/01_list.jpg'))
 
 def warp(img):
     pass
@@ -46,7 +37,7 @@ def find_bboxes(img):
     # this can be 10 to 15 lines of code using skimage functions
 
     # denoise
-    denoise = skimage.restoration.denoise_bilateral(image, multichannel=True)
+    denoise = skimage.restoration.denoise_bilateral(img, multichannel=True)
     # greyscale
     grey = skimage.color.rgb2gray(denoise)
     # threshold
@@ -76,7 +67,7 @@ def parse_input(Input):
     pass
 
 def update_img(img):
-    bboxes = find_bboxes(img)
+    bboxes, bw = find_bboxes(img)
 
     plt.imshow(bw, cmap='gray')
     for bbox in bboxes:
@@ -89,14 +80,15 @@ def update_img(img):
     callback = GUI()
     axnext = plt.axes([0.81, 0.05, 0.1, 0.075])
     bnext = matplotlib.widgets.Button(axnext, 'Apply')
-    bnext.on_clicked(callback.next)
+    bnext.on_clicked(callback.apply)
     rax = plt.axes([0.05, 0.4, 0.1, 0.15])
     labels = ["Bold", "Italic", "Underline"]
     check = matplotlib.widgets.CheckButtons(rax, labels)
-    pass
+    plt.show()
 
 if __name__ == "__main__":
     img = load_img()
     # img = warp(img)
     # bboxes = find_bboxes(img)
-    loop(img)
+    # loop(img)
+    update_img(img)
