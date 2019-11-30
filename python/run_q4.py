@@ -2,6 +2,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches
+import matplotlib.widgets
 
 import skimage
 import skimage.measure
@@ -14,6 +15,27 @@ import skimage.segmentation
 
 from nn import *
 from q4 import *
+
+
+class Index(object):
+    ind = 0
+
+    def next(self, event):
+        self.ind += 1
+        i = self.ind % len(freqs)
+        ydata = np.sin(2*np.pi*freqs[i]*t)
+        l.set_ydata(ydata)
+        plt.draw()
+
+    def prev(self, event):
+        self.ind -= 1
+        i = self.ind % len(freqs)
+        ydata = np.sin(2*np.pi*freqs[i]*t)
+        l.set_ydata(ydata)
+        plt.draw()
+
+
+
 # do not include any more libraries here!
 # no opencv, no sklearn, etc!
 import warnings
@@ -30,6 +52,18 @@ for img in os.listdir('../images'):
         rect = matplotlib.patches.Rectangle((minc, minr), maxc - minc, maxr - minr,
                                 fill=False, edgecolor='red', linewidth=2)
         plt.gca().add_patch(rect)
+
+
+    #################
+    callback = Index()
+    axnext = plt.axes([0.81, 0.05, 0.1, 0.075])
+    bnext = matplotlib.widgets.Button(axnext, 'Apply')
+    bnext.on_clicked(callback.next)
+    rax = plt.axes([0.05, 0.4, 0.1, 0.15])
+    labels = ["Bold", "Italic", "Underline"]
+    check = matplotlib.widgets.CheckButtons(rax, labels)
+    #################
+
     plt.show()
     # find the rows using..RANSAC, counting, clustering, etc.
     y_centers = [(bbox[2] + bbox[0]) / 2 for bbox in bboxes]
