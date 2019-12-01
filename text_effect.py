@@ -1,14 +1,32 @@
 import numpy as np
+import cv2
 
 def bold(img, bboxes):
-    pass
+    bboxes = bboxes[0]
+    kernel = np.ones((10, 10), np.uint8)
+    img_new = cv2.erode(img, kernel, iterations=1)
+    # img_new = cv2.dilate(img_new, kernel, iterations=1)
+    for bbox in bboxes:
+        H = np.arange(bbox[0], bbox[2]).astype(int)
+        W = np.arange(bbox[1], bbox[3]).astype(int)
+
+        # Meshgrid
+        WW, HH = np.meshgrid(W, H)
+
+        # Now we flatten both arrays
+        ind_Orig_Y = HH.flatten().astype(int)
+        ind_Orig_X = WW.flatten().astype(int)
+
+        # match pixels
+        img[ind_Orig_Y, ind_Orig_X] = img_new[ind_Orig_Y, ind_Orig_X]
+    return img
 
 def italic(img, bboxes):
-    # Pre-allocate empty result image, same shape
+    # Warp matrix
     A = np.array(([1, 0, 0], [-0.5, 1, 0], [0, 0, 1]))
 
+    # Pre-allocated empty image
     result = np.zeros(img.shape)
-    # print(bboxes)
     bboxes = bboxes[0]
     for bbox in bboxes:
         # ul = np.array(([bbox[0], bbox[1], 1]))
@@ -29,13 +47,8 @@ def italic(img, bboxes):
         # print("bottom right warped: ", br_w)
 
         bias = bl_w[1] - bl[1]
-        # print("bias", bias)
 
-        # result = np.zeros(( - bbox[0], bbox[3] - bbox[1]))
-
-        # H = np.arange(h)
         H = np.arange(bbox[0], bbox[2]).astype(int)
-        # W = np.arange(w)
         W = np.arange(bbox[1], bbox[3]).astype(int)
 
         # Meshgrid
@@ -52,11 +65,8 @@ def italic(img, bboxes):
         # match the pixels
         result[ind_Des_Y, ind_Des_X] = img[ind_Orig_Y, ind_Orig_X]
         # make all pixels at the original char the same color as the paper
-        img[ind_Orig_Y, ind_Orig_X] = img[br[0], br[1]]
+        img[ind_Orig_Y, ind_Orig_X] = img[br[0]+5, br[1]+5]
         img[ind_Des_Y, ind_Des_X - bias] = result[ind_Des_Y, ind_Des_X]
-
-
-    # plt.imshow(bw, cmap='gray')
 
     return img
 
