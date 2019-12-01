@@ -17,6 +17,7 @@ def bold(img, bboxes):
         ind_Orig_Y = HH.flatten().astype(int)
         ind_Orig_X = WW.flatten().astype(int)
 
+
         # match pixels
         img[ind_Orig_Y, ind_Orig_X] = img_new[ind_Orig_Y, ind_Orig_X]
     return img
