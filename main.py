@@ -19,7 +19,7 @@ class GUI(object):
         index = labels.index(label)
 
 def load_img():
-    return cv2.imread('images/receipt.jpg')
+    return cv2.imread('images/simon.jpg')
     #return skimage.img_as_float(skimage.io.imread('images/receipt.jpg'))
 
 def loop(img):
