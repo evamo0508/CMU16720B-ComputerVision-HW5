@@ -2,6 +2,14 @@ import numpy as np
 import cv2
 from skimage.filters import threshold_local
 import imutils
+import skimage
+import skimage.measure
+import skimage.color
+import skimage.restoration
+import skimage.io
+import skimage.filters
+import skimage.morphology
+import skimage.segmentation
 
 def order_points(pts):
     # initialzie a list of coordinates that will be ordered
@@ -136,13 +144,13 @@ def find_bboxes(img):
     # this can be 10 to 15 lines of code using skimage functions
 
     # denoise
-    denoise = skimage.restoration.denoise_bilateral(img, multichannel=True)
+    #denoise = skimage.restoration.denoise_bilateral(img)
     # greyscale
-    grey = skimage.color.rgb2gray(denoise)
+    #grey = skimage.color.rgb2gray(denoise)
     # threshold
-    th = skimage.filters.threshold_otsu(grey)
+    #th = skimage.filters.threshold_otsu(grey)
     # morphology
-    opening = skimage.morphology.closing(grey < th, skimage.morphology.square(2))
+    opening = skimage.morphology.closing(img, skimage.morphology.square(2))
     # remove artifacts connected to image border
     cleared = skimage.segmentation.clear_border(opening)
     # label
