@@ -1,5 +1,6 @@
 import numpy as np
 import os
+import cv2
 import matplotlib.pyplot as plt
 import matplotlib.patches
 import matplotlib.widgets
@@ -15,6 +16,7 @@ import skimage.segmentation
 
 # from nn import *
 # from q4 import *
+from img_effect import *
 from text_effect import *
 
 class GUI(object):
@@ -24,40 +26,9 @@ class GUI(object):
     def check_effects(self, label):
         index = labels.index(label)
 
-
-
 def load_img():
-    return skimage.img_as_float(skimage.io.imread('images/01_list.jpg'))
-
-def warp(img):
-    pass
-
-def find_bboxes(img):
-    bboxes = []
-    bw = None
-    # insert processing in here
-    # one idea estimate noise -> denoise -> greyscale -> threshold -> morphology -> label -> skip small boxes
-    # this can be 10 to 15 lines of code using skimage functions
-
-    # denoise
-    denoise = skimage.restoration.denoise_bilateral(img, multichannel=True)
-    # greyscale
-    grey = skimage.color.rgb2gray(denoise)
-    # threshold
-    th = skimage.filters.threshold_otsu(grey)
-    # morphology
-    opening = skimage.morphology.closing(grey < th, skimage.morphology.square(2))
-    # remove artifacts connected to image border
-    cleared = skimage.segmentation.clear_border(opening)
-    # label
-    label = skimage.measure.label(cleared, connectivity=2)
-    # skip small boxes
-    props = skimage.measure.regionprops(label)
-    area = [x.area for x in props]
-    mean_area = sum(area) / len(area)
-    bboxes = [x.bbox for x in props if x.area > mean_area / 2.1]
-    bw = 1.0 - cleared  # character: 0.0, background: 1.0
-    return bboxes, bw
+    return cv2.imread('images/receipt.jpg')
+    #return skimage.img_as_float(skimage.io.imread('images/receipt.jpg'))
 
 def loop(img):
     while True:
@@ -93,10 +64,10 @@ def update_img(img):
 
 if __name__ == "__main__":
     img = load_img()
-    # img = warp(img)
-    bboxes = find_bboxes(img)
+    img = warp(img)
+    #bboxes, bw = find_bboxes(img)
     # im1 = italic(img, bboxes)
-    im1 = bold(img, bboxes)
-    im1 = italic(im1, bboxes)
-    plt.imshow(im1)
+    #im1 = bold(img, bboxes)
+    #im1 = italic(im1, bboxes)
+    plt.imshow(img, cmap='gray')
     plt.show()
