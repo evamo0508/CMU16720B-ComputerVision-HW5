@@ -5,14 +5,6 @@ import matplotlib.pyplot as plt
 import matplotlib.patches
 import matplotlib.widgets
 
-import skimage
-import skimage.measure
-import skimage.color
-import skimage.restoration
-import skimage.io
-import skimage.filters
-import skimage.morphology
-import skimage.segmentation
 
 # from nn import *
 # from q4 import *
@@ -65,8 +57,8 @@ def update_img(img):
 if __name__ == "__main__":
     img = load_img()
     img = warp(img)
-    #bboxes, bw = find_bboxes(img)
-    # im1 = italic(img, bboxes)
+    bboxes, bw = find_bboxes(img)
+    im1 = italic(img, bboxes)
     #im1 = bold(img, bboxes)
     #im1 = italic(im1, bboxes)
     plt.imshow(img, cmap='gray')

@@ -2,7 +2,6 @@ import numpy as np
 import cv2
 
 def bold(img, bboxes):
-    bboxes = bboxes[0]
     kernel = np.ones((10, 10), np.uint8)
     img_new = cv2.erode(img, kernel, iterations=1)
     # img_new = cv2.dilate(img_new, kernel, iterations=1)
@@ -28,7 +27,6 @@ def italic(img, bboxes):
 
     # Pre-allocated empty image
     result = np.zeros(img.shape)
-    bboxes = bboxes[0]
     for bbox in bboxes:
         # ul = np.array(([bbox[0], bbox[1], 1]))
         br = np.array(([bbox[2], bbox[3], 1]))
