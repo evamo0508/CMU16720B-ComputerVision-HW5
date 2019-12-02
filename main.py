@@ -1,5 +1,6 @@
 import numpy as np
 import os
+import cv2
 import matplotlib.pyplot as plt
 import matplotlib.patches
 import matplotlib.widgets
@@ -15,6 +16,7 @@ import skimage.segmentation
 
 # from nn import *
 # from q4 import *
+from img_effect import *
 from text_effect import *
 
 class GUI(object):
@@ -24,13 +26,9 @@ class GUI(object):
     def check_effects(self, label):
         index = labels.index(label)
 
-
-
 def load_img():
-    return skimage.img_as_float(skimage.io.imread('images/01_list.jpg'))
-
-def warp(img):
-    pass
+    return cv2.imread('images/receipt.jpg')
+    #return skimage.img_as_float(skimage.io.imread('images/receipt.jpg'))
 
 def find_bboxes(img):
     bboxes = []
@@ -93,10 +91,10 @@ def update_img(img):
 
 if __name__ == "__main__":
     img = load_img()
-    # img = warp(img)
-    bboxes = find_bboxes(img)
+    img = warp(img)
+    #bboxes = find_bboxes(img)
     # im1 = italic(img, bboxes)
-    im1 = bold(img, bboxes)
-    im1 = italic(im1, bboxes)
-    plt.imshow(im1)
+    #im1 = bold(img, bboxes)
+    #im1 = italic(im1, bboxes)
+    plt.imshow(img, cmap='gray')
     plt.show()
