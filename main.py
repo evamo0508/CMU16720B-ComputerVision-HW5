@@ -26,7 +26,7 @@ class GUI(object):
         bnext = Button(axnext, 'Apply')
         bnext.on_clicked(self.apply)
 
-        rax = plt.axes([0.05, 0.4, 0.1, 0.15])
+        rax = plt.axes([0.01, 0.4, 0.25, 0.5])
         check = CheckButtons(rax, self.labels)
         check.on_clicked(self.check_effects)
 
@@ -45,11 +45,12 @@ class GUI(object):
 
     def apply(self, event):
         for i, flag in enumerate(self.f):
-            if flag:
-                self.img = self.fList[i](self.img, self.selected_bboxes)
             if flag and i == 5: #starwars
+                self.img = self.fList[i](self.img, self.bboxes)
                 self.bboxes, _ = find_bboxes(self.img)
-        self.ax.imshow(self.img, cmap='gray')
+            elif flag:
+                self.img = self.fList[i](self.img, self.selected_bboxes)
+        self.ax.imshow(self.img)
 
     def check_effects(self, label):
         index = self.labels.index(label)
