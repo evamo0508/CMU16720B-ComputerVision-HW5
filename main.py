@@ -3,7 +3,7 @@ import os
 import cv2
 import matplotlib.pyplot as plt
 import matplotlib.patches
-import matplotlib.widgets
+from matplotlib.widgets import Button, CheckButtons, RectangleSelector
 
 
 # from nn import *
@@ -12,55 +12,75 @@ from img_effect import *
 from text_effect import *
 
 class GUI(object):
-    ind = 0
+    def __init__(self, img, bboxes):
+        self.img = img
+        self.bboxes = bboxes
+        self.selected_bboxes = []
+        self.f = []
+        self.fList = [bold, italic, underline]
+
+        fig, ax = plt.subplots()
+
+        # Button
+        axnext = plt.axes([0.81, 0.05, 0.1, 0.075])
+        bnext = Button(axnext, 'Apply')
+        bnext.on_clicked(self.apply)
+
+        rax = plt.axes([0.05, 0.4, 0.1, 0.15])
+        self.labels = ["Bold", "Italic", "Underline"]
+        check = CheckButtons(rax, self.labels)
+        check.on_clicked(self.check_effects)
+
+        # Select region
+        # drawtype is 'box' or 'line' or 'none'
+        toggle_selector.RS = RectangleSelector(ax, self.line_select_callback,
+                                       drawtype='box', useblit=True,
+                                       button=[1, 3],  # don't use middle button
+                                       minspanx=5, minspany=5,
+                                       spancoords='pixels',
+                                       interactive=True)
+        print("\n      click  -->  release")
+        plt.connect('key_press_event', toggle_selector)
+        ax.imshow(img, cmap='gray')
+        plt.show()
+
     def apply(self, event):
-        pass
+        for func in self.f:
+            self.img = func(self.img, self.selected_bboxes)
+        plt.imshow(self.img, cmap='gray')
+        self.f = []
+
     def check_effects(self, label):
-        index = labels.index(label)
+        index = self.labels.index(label)
+        self.f.append(self.fList[index])
+
+    def line_select_callback(self, eclick, erelease):
+        'eclick and erelease are the press and release events'
+        x1, y1 = eclick.xdata, eclick.ydata
+        x2, y2 = erelease.xdata, erelease.ydata
+        print("(%3.2f, %3.2f) --> (%3.2f, %3.2f)" % (x1, y1, x2, y2))
+        self.selected_bboxes = [x for x in self.bboxes if (x1 < x[0] and x[0] < x2
+                                                       and x1 < x[2] and x[2] < x2
+                                                       and y1 < x[1] and x[1] < y2
+                                                       and y1 < x[3] and x[3] < y2)]
+
+def toggle_selector(event):
+    print(' Key pressed.')
+    if event.key in ['Q', 'q'] and toggle_selector.RS.active:
+        print(' RectangleSelector deactivated.')
+        toggle_selector.RS.set_active(False)
+    if event.key in ['A', 'a'] and not toggle_selector.RS.active:
+        print(' RectangleSelector activated.')
+        toggle_selector.RS.set_active(True)
 
 def load_img():
     return cv2.imread('images/simon2.jpg')
-    #return skimage.img_as_float(skimage.io.imread('images/receipt.jpg'))
-
-def loop(img):
-    while True:
-        f = parse_input(input())
-        img = f(img, bboxes)
-        update_img(img)
-
-def parse_input(Input):
-    # return function name
-    pass
-
-def update_img(img):
-    bboxes, bw = find_bboxes(img)
-    print(bboxes)
-
-    plt.imshow(bw, cmap='gray')
-    for bbox in bboxes:
-        minr, minc, maxr, maxc = bbox
-        rect = matplotlib.patches.Rectangle((minc, minr), maxc - minc, maxr - minr,
-                                            fill=False, edgecolor='red', linewidth=2)
-        plt.gca().add_patch(rect)
-
-    # Set up GUI
-    callback = GUI()
-    axnext = plt.axes([0.81, 0.05, 0.1, 0.075])
-    bnext = matplotlib.widgets.Button(axnext, 'Apply')
-    bnext.on_clicked(callback.apply)
-    rax = plt.axes([0.05, 0.4, 0.1, 0.15])
-    labels = ["Bold", "Italic", "Underline"]
-    check = matplotlib.widgets.CheckButtons(rax, labels)
-    # check.on_clicked(func)
-    plt.show()
 
 if __name__ == "__main__":
     img = load_img()
     img = warp(img)
     bboxes, bw = find_bboxes(img)
+    gui = GUI(img, bboxes)
+    cv2.imwrite('images/result.jpg', gui.img)
 
-    #im1 = bold(img, bboxes)
-    im1 = italic(img, bboxes)
 
-    plt.imshow(im1, cmap='gray')
-    plt.show()
