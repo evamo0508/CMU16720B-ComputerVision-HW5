@@ -27,6 +27,7 @@ def sortBoxes2Rows(img, bboxes):
     return rows
 
 def bold(img, bboxes):
+    print("bold")
     kernel = np.ones((10, 10), np.uint8)
     img_new = cv2.erode(img, kernel, iterations=1)
     # img_new = cv2.dilate(img_new, kernel, iterations=1)
@@ -47,6 +48,7 @@ def bold(img, bboxes):
     return img
 
 def italic(img, bboxes):
+    print("italic")
     # Warp matrix
     A = np.array(([1, 0, 0], [-0.5, 1, 0], [0, 0, 1]))
 
@@ -95,6 +97,7 @@ def italic(img, bboxes):
     return img
 
 def underline(img, bboxes):
+    print("underline")
     rows = sortBoxes2Rows(img, bboxes)
 
     for row in rows:
@@ -108,6 +111,7 @@ def underline(img, bboxes):
     return img
 
 def highlight(img, bboxes):
+    print("highlight")
     rows = sortBoxes2Rows(img, bboxes)
     img_new = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
     for row in rows:

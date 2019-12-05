@@ -16,9 +16,9 @@ class GUI(object):
         self.img = img
         self.bboxes = bboxes
         self.selected_bboxes = []
-        self.f = []
-        self.fList = [bold, italic, underline]
-
+        self.labels = ["Bold", "Italic", "Underline", "Highlight", "ChangeColor"]
+        self.f = [False for x in self.labels]
+        self.fList = [bold, italic, underline, highlight, change_color]
         fig, self.ax = plt.subplots()
 
         # Button
@@ -27,7 +27,6 @@ class GUI(object):
         bnext.on_clicked(self.apply)
 
         rax = plt.axes([0.05, 0.4, 0.1, 0.15])
-        self.labels = ["Bold", "Italic", "Underline"]
         check = CheckButtons(rax, self.labels)
         check.on_clicked(self.check_effects)
 
@@ -45,24 +44,24 @@ class GUI(object):
         plt.show()
 
     def apply(self, event):
-        for func in self.f:
-            self.img = func(self.img, self.selected_bboxes)
+        for i, flag in enumerate(self.f):
+            if flag:
+                self.img = self.fList[i](self.img, self.selected_bboxes)
         self.ax.imshow(self.img, cmap='gray')
-        self.f = []
 
     def check_effects(self, label):
         index = self.labels.index(label)
-        self.f.append(self.fList[index])
+        self.f[index] = not self.f[index]
 
     def line_select_callback(self, eclick, erelease):
         'eclick and erelease are the press and release events'
         x1, y1 = eclick.xdata, eclick.ydata
         x2, y2 = erelease.xdata, erelease.ydata
         print("(%3.2f, %3.2f) --> (%3.2f, %3.2f)" % (x1, y1, x2, y2))
-        self.selected_bboxes = [x for x in self.bboxes if (x1 < x[0] and x[0] < x2
-                                                       and x1 < x[2] and x[2] < x2
-                                                       and y1 < x[1] and x[1] < y2
-                                                       and y1 < x[3] and x[3] < y2)]
+        self.selected_bboxes = [x for x in self.bboxes if (x1 < x[1] and x[1] < x2
+                                                       and x1 < x[3] and x[3] < x2
+                                                       and y1 < x[0] and x[0] < y2
+                                                       and y1 < x[2] and x[2] < y2)]
 
 def toggle_selector(event):
     print(' Key pressed.')
