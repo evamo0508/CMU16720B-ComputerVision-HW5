@@ -19,7 +19,7 @@ class GUI(object):
         self.f = []
         self.fList = [bold, italic, underline]
 
-        fig, ax = plt.subplots()
+        fig, self.ax = plt.subplots()
 
         # Button
         axnext = plt.axes([0.81, 0.05, 0.1, 0.075])
@@ -33,7 +33,7 @@ class GUI(object):
 
         # Select region
         # drawtype is 'box' or 'line' or 'none'
-        toggle_selector.RS = RectangleSelector(ax, self.line_select_callback,
+        toggle_selector.RS = RectangleSelector(self.ax, self.line_select_callback,
                                        drawtype='box', useblit=True,
                                        button=[1, 3],  # don't use middle button
                                        minspanx=5, minspany=5,
@@ -41,13 +41,13 @@ class GUI(object):
                                        interactive=True)
         print("\n      click  -->  release")
         plt.connect('key_press_event', toggle_selector)
-        ax.imshow(img, cmap='gray')
+        self.ax.imshow(img, cmap='gray')
         plt.show()
 
     def apply(self, event):
         for func in self.f:
             self.img = func(self.img, self.selected_bboxes)
-        plt.imshow(self.img, cmap='gray')
+        self.ax.imshow(self.img, cmap='gray')
         self.f = []
 
     def check_effects(self, label):
