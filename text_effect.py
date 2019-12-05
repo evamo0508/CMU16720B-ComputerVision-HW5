@@ -1,6 +1,31 @@
 import numpy as np
 import cv2
 
+def sortBoxes2Rows(img, bboxes):
+
+    # find the rows using..RANSAC, counting, clustering, etc.
+    y_centers = [(bbox[2] + bbox[0]) / 2 for bbox in bboxes]
+    sorted_bboxes = [x for _, x in sorted(zip(y_centers, bboxes))]
+    sorted(y_centers)
+    current_y = (sorted_bboxes[0][0] + sorted_bboxes[0][2]) / 2
+    count = 1
+    rows = []
+    row = []
+    for i in range(len(sorted_bboxes)):
+        if abs(y_centers[i] - current_y) > 0.07 * img.shape[0]:
+            row = sorted(row, key=lambda x: x[1])
+            rows.append(row)
+            row = [sorted_bboxes[i]]
+            count = 1
+            current_y = y_centers[i]
+        else:
+            row.append(sorted_bboxes[i])
+            count += 1
+            current_y += (y_centers[i] - current_y) / count
+    row = sorted(row, key=lambda x: x[1])
+    rows.append(row)
+    return rows
+
 def bold(img, bboxes):
     kernel = np.ones((10, 10), np.uint8)
     img_new = cv2.erode(img, kernel, iterations=1)
@@ -70,10 +95,38 @@ def italic(img, bboxes):
     return img
 
 def underline(img, bboxes):
-    pass
+    rows = sortBoxes2Rows(img, bboxes)
+
+    for row in rows:
+        min_x = row[0][1]
+        max_x = row[-1][3]
+        max_y = 0
+        for box in row:
+            if box[2] > max_y:
+                max_y = box[2]
+        cv2.line(img, (min_x, max_y), (max_x, max_y), (0, 0, 0), 15)
+    return img
 
 def highlight(img, bboxes):
-    pass
+    rows = sortBoxes2Rows(img, bboxes)
+    img_new = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
+    for row in rows:
+        min_x = row[0][1]
+        max_x = row[-1][3]
+        min_y = img.shape[0]
+        max_y = 0
+        for box in row:
+            if box[2] > max_y:
+                max_y = box[2]
+            if box[0] < min_y:
+                min_y = box[0]
+        for i in range(min_y - 10, max_y + 10):
+            for j in range(min_x - 10, max_x + 10):
+                if img[i, j] > 20:
+                    img_new[i, j, 0] = 255
+                    img_new[i, j, 1] = 255
+                    img_new[i, j, 2] = 0
+    return img_new
 
 def change_color(img, bboxes):
     pass
