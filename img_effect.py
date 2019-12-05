@@ -10,6 +10,7 @@ import skimage.io
 import skimage.filters
 import skimage.morphology
 import skimage.segmentation
+from text_effect import *
 
 def order_points(pts):
     # initialzie a list of coordinates that will be ordered
@@ -138,7 +139,25 @@ def warp(img):
     return warped
 
 def starwars(img, bboxes):
+    # Crop out the text area
+    rows = sortBoxes2Rows(img, bboxes)
     H, W = img.shape[:2]
+    last_row = rows[-1]
+    max_y = 0
+    for box in last_row:
+        if box[2] > max_y:
+            max_y = box[2]
+    min_x = W
+    max_x = 0
+    for row in rows:
+        if row[0][1] < min_x:
+            min_x = row[0][1]
+        if row[-1][3] > max_x:
+            max_x = row[-1][3]
+    img = img[0:max_y + 10, min_x - 10:max_x + 10]
+
+    H, W = img.shape[:2]
+
     rect = np.array([
                     [0, 0],
                     [W - 1, 0],
