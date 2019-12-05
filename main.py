@@ -16,9 +16,9 @@ class GUI(object):
         self.img = img
         self.bboxes = bboxes
         self.selected_bboxes = []
-        self.labels = ["Bold", "Italic", "Underline", "Highlight", "ChangeColor"]
+        self.labels = ["Bold", "Italic", "Underline", "Highlight", "StrikeThrough", "StarWars"]
         self.f = [False for x in self.labels]
-        self.fList = [bold, italic, underline, highlight, change_color]
+        self.fList = [bold, italic, underline, highlight, strikethrough, starwars]
         fig, self.ax = plt.subplots()
 
         # Button
@@ -47,6 +47,8 @@ class GUI(object):
         for i, flag in enumerate(self.f):
             if flag:
                 self.img = self.fList[i](self.img, self.selected_bboxes)
+            if flag and i == 5: #starwars
+                self.bboxes, _ = find_bboxes(self.img)
         self.ax.imshow(self.img, cmap='gray')
 
     def check_effects(self, label):
@@ -81,6 +83,5 @@ if __name__ == "__main__":
     bboxes, bw = find_bboxes(img)
     gui = GUI(img, bboxes)
     cv2.imwrite('images/result.jpg', gui.img)
-
 
 

@@ -133,6 +133,29 @@ def warp(img):
     #cv2.imshow("Original", imutils.resize(orig, height = 650))
     #cv2.imshow("Scanned", imutils.resize(warped, height = 650))
     #cv2.waitKey(0)
+    #cv2.destroyAllWindows()
+
+    return warped
+
+def starwars(img, bboxes):
+    H, W = img.shape[:2]
+    rect = np.array([
+                    [0, 0],
+                    [W - 1, 0],
+                    [W - 1, H - 1],
+                    [0, H - 1]], dtype = "float32")
+    dst = np.array([
+                    [0.4 * W, 0.2 * H],
+                    [0.6 * W, 0.2 * H],
+                    [W - 1, 0.6 * H],
+                    [0, 0.6 * H]], dtype = "float32")
+
+    # compute the perspective transform matrix and then apply it
+    M = cv2.getPerspectiveTransform(rect, dst)
+    warped = cv2.warpPerspective(img, M, (W, H))
+    cv2.imshow("Starwars", imutils.resize(warped, height = 650))
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
 
     return warped
 
