@@ -113,7 +113,7 @@ def underline(img, bboxes):
 def highlight(img, bboxes):
     print("highlight")
     rows = sortBoxes2Rows(img, bboxes)
-    img_new = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
+    gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
     for row in rows:
         min_x = row[0][1]
         max_x = row[-1][3]
@@ -126,11 +126,11 @@ def highlight(img, bboxes):
                 min_y = box[0]
         for i in range(min_y - 10, max_y + 10):
             for j in range(min_x - 10, max_x + 10):
-                if img[i, j] > 20:
-                    img_new[i, j, 0] = 255
-                    img_new[i, j, 1] = 255
-                    img_new[i, j, 2] = 0
-    return img_new
+                if gray[i, j] > 20:
+                    img[i, j, 0] = 255
+                    img[i, j, 1] = 255
+                    img[i, j, 2] = 0
+    return img
 
 def strikethrough(img, bboxes):
     print("strikethrough")

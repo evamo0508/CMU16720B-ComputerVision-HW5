@@ -128,7 +128,7 @@ def warp(img):
     warped = cv2.cvtColor(warped, cv2.COLOR_BGR2GRAY)
     T = threshold_local(warped, 11, offset = 10, method = "gaussian")
     warped = (warped > T).astype("uint8") * 255
-    warped = cv2.cvtColor(warped, cv2.COLOR_GRAY2BGR)
+    warped = cv2.cvtColor(warped, cv2.COLOR_GRAY2RGB)
 
     # show the original and scanned images
     #print("STEP 3: Apply perspective transform")
@@ -175,10 +175,10 @@ def starwars(img, bboxes):
     warped = cv2.warpPerspective(img, M, (W, H), cv2.INTER_LINEAR, borderValue=(255, 255, 255))
     mask = (warped[:, :, 0] == 255)
     warped[mask] = (0, 0, 0)
-    warped[1 - mask] = (0, 255, 255)
-    cv2.imshow("Starwars", imutils.resize(warped, height = 650))
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    warped[np.logical_not(mask)] = (255, 255, 0)
+    #cv2.imshow("Starwars", warped)
+    #cv2.waitKey(0)
+    #cv2.destroyAllWindows()
 
     return warped
 
@@ -189,7 +189,7 @@ def find_bboxes(img):
     # one idea estimate noise -> denoise -> greyscale -> threshold -> morphology -> label -> skip small boxes
     # this can be 10 to 15 lines of code using skimage functions
 
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
     # denoise
     denoise = skimage.restoration.denoise_bilateral(gray, multichannel=False)
 
