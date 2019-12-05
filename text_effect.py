@@ -132,5 +132,18 @@ def highlight(img, bboxes):
                     img_new[i, j, 2] = 0
     return img_new
 
-def change_color(img, bboxes):
-    pass
+def strikethrough(img, bboxes):
+    print("strikethrough")
+    rows = sortBoxes2Rows(img, bboxes)
+
+    for row in rows:
+        min_x = row[0][1]
+        max_x = row[-1][3]
+        max_y = 0
+        sum_y = 0
+        for box in row:
+            sum_y += (box[0] + box[2]) / 2
+        avg_y = int(sum_y / len(row))
+        cv2.line(img, (min_x, avg_y), (max_x, avg_y), (0, 0, 0), 15)
+    return img
+
