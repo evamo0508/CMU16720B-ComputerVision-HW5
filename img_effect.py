@@ -86,13 +86,6 @@ def warp(img):
     gray = cv2.GaussianBlur(gray, (5, 5), 0)
     edged = cv2.Canny(gray, 75, 200)
 
-    # show the original image and the edge detected image
-    #print("STEP 1: Edge Detection")
-    #cv2.imshow("Image", img)
-    #cv2.imshow("Edged", edged)
-    #cv2.waitKey(0)
-    #cv2.destroyAllWindows()
-
     # find the contours in the edged image, keeping only the
     # largest ones, and initialize the screen contour
     cnts = cv2.findContours(edged.copy(), cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
@@ -112,13 +105,6 @@ def warp(img):
             screenCnt = approx
             break
 
-    # show the contour (outline) of the piece of paper
-    #print("STEP 2: Find contours of paper")
-    #cv2.drawContours(img, [screenCnt], -1, (0, 255, 0), 2)
-    #cv2.imshow("Outline", img)
-    #cv2.waitKey(0)
-    #cv2.destroyAllWindows()
-
     # apply the four point transform to obtain a top-down
     # view of the original image
     warped = four_point_transform(orig, screenCnt.reshape(4, 2) * ratio)
@@ -132,10 +118,10 @@ def warp(img):
 
     # show the original and scanned images
     #print("STEP 3: Apply perspective transform")
-    #cv2.imshow("Original", imutils.resize(orig, height = 650))
-    #cv2.imshow("Scanned", warped)
-    #cv2.waitKey(0)
-    #cv2.destroyAllWindows()
+    cv2.imshow("Original", imutils.resize(orig, height = 650))
+    cv2.imshow("Scanned", imutils.resize(warped, height = 650))
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
 
     return warped
 
@@ -192,9 +178,6 @@ def find_bboxes(img):
     gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
     # denoise
     denoise = skimage.restoration.denoise_bilateral(gray, multichannel=False)
-
-    # greyscale
-    #grey = skimage.color.rgb2gray(denoise)
 
     # threshold
     th = skimage.filters.threshold_otsu(denoise)

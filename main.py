@@ -5,9 +5,6 @@ import matplotlib.pyplot as plt
 import matplotlib.patches
 from matplotlib.widgets import Button, CheckButtons, RectangleSelector
 
-
-# from nn import *
-# from q4 import *
 from img_effect import *
 from text_effect import *
 
@@ -75,13 +72,10 @@ def toggle_selector(event):
         print(' RectangleSelector activated.')
         toggle_selector.RS.set_active(True)
 
-def load_img():
-    return cv2.imread('images/simon2.jpg')
-
 if __name__ == "__main__":
-    img = load_img()
+    img = cv2.imread('images/simon2.jpg')
     img = warp(img)
-    bboxes, bw = find_bboxes(img)
+    bboxes, _ = find_bboxes(img)
     gui = GUI(img, bboxes)
     cv2.imwrite('images/result.jpg', gui.img)
 
